@@ -44,17 +44,24 @@
         </div>
 
         <div class="navbar-end">
-            <div class="navbar-item">
+            <div class="navbar-item" >
                 <p class="control">
-                <a class="bd-tw-button button" href="#" @click="logout">
-                Logout
+                <a class="bd-tw-button button" href="#" @click="logout" v-show="isLoggedIn">
+                    Logga ut
                 </a>
-            </p>
+                <a class="bd-tw-button button" href="#" v-show="isLoggedIn == false" @click="isLoginFormActive = true">
+                    Logga in
+                </a>
+                <b-modal :active.sync="isLoginFormActive" has-modal-card>
+                    <login-form></login-form>
+                </b-modal>
+
+                </p>
             </div>
         <div class="navbar-item">
             <div class="field is-grouped">
             <p class="control">
-                <a class="bd-tw-button button" target="_blank" href="https://github.com/skvist/ramverk2-app">
+                <a class="bd-tw-button button" target="_blank" href="https://github.com/skvist/kanban">
                 <span class="icon">
                     <i class="fa fa-github"></i>
                 </span>
@@ -76,6 +83,7 @@
 
 <script>
 import auth from '../../auth';
+import LoginForm from '../layout/LoginForm';
 
 
 export default {
@@ -83,13 +91,44 @@ export default {
     data() {
         return {
             showNav: false,
+            isLoggedIn: false,
+            isLoginFormActive: false,
         };
+    },
+    components: {
+        LoginForm,
     },
     methods: {
         logout() {
             auth.logout();
+            this.isLoggedIn = false;
+        },
+        checkauth() {
+            auth.checkAuth();
+            this.isLoggedIn = auth.user.authenticated;
         },
     },
+/*     mounted() {
+        auth.checkAuth();
+        this.isLoggedIn = auth.user.authenticated;
+    },
+    created() {
+        auth.checkAuth();
+        this.isLoggedIn = auth.user.authenticated;
+    }, */
+    watch: {
+        $route: 'checkauth',  // call the function which update data
+    },
+
+
+    /* watch: {
+        authed: () => {
+            auth.checkAuth();
+            this.isLoggedIn = auth.user.authenticated;
+            // eslint-disable-next-line
+            console.log(this.isLoggedIn);
+        }, */
+    // },
 };
 </script>
 

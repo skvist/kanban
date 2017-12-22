@@ -20,14 +20,11 @@
 
         <div class="columns" v-for="boards in chunkedBoards">
             <div class="column" v-for="board in boards">
-                <b-message type="is-info">
-                    <h3>{{board.name}}</h3>
-                    <p>
-                    <button class="button is-info" @click="">
-                        Gå till bräda
-                    </button>
-                    </p>
-                </b-message>
+                <a href="#" class="hover-box">
+                <div class="box">
+                     <h3>{{board.name}}</h3>
+                </div>
+                </a>
             </div>
         </div>
 
@@ -57,8 +54,7 @@
             };
         },
         beforeRouteEnter(to, from, next) {
-            auth.checkAuth();
-            if (auth.user.authenticated) {
+            if (auth.checkAuth()) {
                 next();
             } else {
                 next(false);
@@ -87,7 +83,24 @@ h2 {
 }
 
 .message.is-info {
+
+}
+
+.box {
+    border-radius: 3px;
+    color: #fff;
+    background-color: #23D160;
+    padding: 1em 1.25em;
     max-width: 314px;
 }
+
+.box:hover {
+    background-color: rgb(29, 179, 82)
+}
+/* a .hover-box {
+
+} */
+
+
 
 </style>

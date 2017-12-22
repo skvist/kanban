@@ -45,7 +45,6 @@
             return {
                 isLoginActive: false,
                 isRegisterActive: false,
-
             };
         },
     };

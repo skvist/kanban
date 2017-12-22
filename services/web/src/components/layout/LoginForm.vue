@@ -34,7 +34,7 @@
 
 <script>
     const axios = require('axios');
-    const config = require('../../config.js');
+    const config = require('@/config');
 
     export default {
         data() {
@@ -63,6 +63,8 @@
                             duration: 2000,
                             position: 'is-top',
                         });
+                        // eslint-disable-next-line
+                        this.$parent.close();
                         this.$router.push('/kanban');
                     } else {
                         this.$toast.open({

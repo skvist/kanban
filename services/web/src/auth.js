@@ -18,9 +18,10 @@ export default {
 
         if (jwt) {
             this.user.authenticated = true;
-        } else {
-            this.user.authenticated = false;
+            return true;
         }
+        this.user.authenticated = false;
+        return false;
     },
 
     getAuthHeader() {
