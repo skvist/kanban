@@ -7,13 +7,29 @@ services:
         volumes:
             - ./services/users/:/home/node/app
         environment:
-            - DBWEBB_PORT=3001
+            - DBWEBB_PORT_1=3001
             - DBWEBB_DSN=mongodb://mongodb:27018/users
         ports:
             - "3001:3001"
         links:
             - mongodb
-        command: "npm run start-dev"
+        command: "npm run dev"
+
+    kanban:
+        build:
+            context: .
+            dockerfile: .docker/node-8.9/Dockerfile
+        volumes:
+            - ./services/kanban/:/home/node/app
+        environment:
+            - DBWEBB_PORT_2=3002
+            - DBWEBB_DSN=mongodb://mongodb:27018/kanban
+        ports:
+            - "3002:3002"
+        links:
+            - mongodb
+        command: "npm run dev"
+
     mongodb:
         image: mongo:3.4
         environment:

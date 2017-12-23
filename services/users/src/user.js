@@ -8,7 +8,7 @@ var express = require('express'),
 
 var router = express.Router();
 
-mongoose.connect(config.database);
+mongoose.connect(config.database, {useMongoClient: true });
 mongoose.Promise = global.Promise;
 User.schema.plugin(uniqueValidator);
 

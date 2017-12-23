@@ -1,0 +1,53 @@
+[
+    {
+        "title": "Lämna in ramverk2-projektet",
+        "description": "Fixa klart allt och lämna in.",
+        "type": "backlog",
+        "created": "2017-12-22 17:17:17",
+        "modified": "2017-12-22 17:17:17",
+        "deleted": false,
+        "duedate": "2017-12-22 17:17:17",
+        "position": 1,
+        "createdby": "doe",
+        "assigned": "doe",
+        "timelog": []
+    },
+    {
+        "title": "Hacka all kod",
+        "description": "Det är flera delar kvar...",
+        "type": "inprogress",
+        "created": "2017-12-21 17:17:17",
+        "modified": "2017-12-22 18:17:17",
+        "duedate": "2018-12-22 17:17:17",
+        "deleted": false,
+        "position": 1,
+        "createdby": "doe",
+        "assigned": "",
+        "timelog": []
+    },
+    {
+        "title": "Testa användare",
+        "description": "Bygg test ",
+        "type": "backlog",
+        "created": "2017-12-21 17:17:17",
+        "modified": "2017-12-21 17:17:17",
+        "duedate": "2018-02-20 17:17:17",
+        "deleted": false,
+        "position": 2,
+        "createdby": "doe",
+        "assigned": "doe"
+    },
+    {
+        "title": "Fil/repo-struktur",
+        "description": "Vi behöver få till det bra från början, så här tänker vi ett extra varv",
+        "type": "done",
+        "created": "2017-12-20 17:17:17",
+        "modified": "2017-12-20 17:17:17",
+        "duedate": "2018-01-22 17:17:17",
+        "deleted": false,
+        "position": 1,
+        "createdby": "doe",
+        "assigned": "doe",
+        "timelog": [ { "user": "doe", "description": "Hackade till det", "time": 1 }]
+    }
+]
