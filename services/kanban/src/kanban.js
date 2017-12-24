@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const config = require('./config');
 const Board = require('./models/board');
 const Item = require('./models/item');
+const checkAccess = require('./middleware/access-to-item');
+const checkAccessBoard = require('./middleware/access-to-board');
 
 /* const mongo = require('mongodb');
     const ObjectId = mongo.ObjectID;
@@ -11,7 +13,7 @@ const Item = require('./models/item');
 
 //uniqueValidator = require('mongoose-unique-validator');
 
-var ObjectId = mongoose.Schema.ObjectId;
+// var ObjectId = mongoose.Schema.ObjectId;
 var router = express.Router();
 
 mongoose.connect(config.database, {useMongoClient: true });
@@ -65,7 +67,6 @@ router.get('/example', function(req, res) {
 
     res.json({ success: true, message: "Kanban board and items created!" });
 });
-
 
 
 

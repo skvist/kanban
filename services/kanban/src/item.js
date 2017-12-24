@@ -4,7 +4,10 @@ const mongoose = require('mongoose');
 const config = require('./config');
 const Board = require('./models/board');
 const Item = require('./models/item');
-const checkAccess = require('./middleware/checkaccess');
+const checkAccess = require('./middleware/access-to-item');
+const checkAccessBoard = require('./middleware/access-to-board');
+
+// const checkAccessBoard = require('./middleware/access-to-board');
 
 /* const mongo = require('mongodb');
     const ObjectId = mongo.ObjectID;
@@ -12,7 +15,7 @@ const checkAccess = require('./middleware/checkaccess');
 
 //uniqueValidator = require('mongoose-unique-validator');
 
-var ObjectId = mongoose.Schema.ObjectId;
+const ObjectId = mongoose.Schema.ObjectId;
 var router = express.Router();
 
 router.use(jwtVerify(config.jwtsecret));
@@ -20,6 +23,14 @@ router.use(jwtVerify(config.jwtsecret));
 mongoose.connect(config.database, {useMongoClient: true });
 mongoose.Promise = global.Promise;
 //User.schema.plugin(uniqueValidator);
+
+function sendDoesNotExists(res, id) {
+    return res.json({
+        success: false,
+        title: "ItemDoesNotExist",
+        message: `The Item with id ${id} does not exist.`
+    });
+}
 
 /* GET Kanban Item listing. */
 router.get('/', (req, res) => {
@@ -42,6 +53,8 @@ router.get('/show/:id', checkAccess(), async (req, res) => {
         if (err) {
             console.log(err);
             res.json({ success: false, title: err.name, message: err.message });
+        } else if (!document) {
+            return sendDoesNotExists(res, id);
         }
         //console.log(document);
         return document;
@@ -52,7 +65,7 @@ router.get('/show/:id', checkAccess(), async (req, res) => {
 
 /* POST Insert Item into db . */
 
-router.post('/create/:boardid/:type/', async (req, res, next) => {
+router.post('/create/:boardid/:type/', checkAccess(), async (req, res) => {
     const item = req.body;
     const boardId = req.params.boardid;
     //const itemId = req.params.itemid;
@@ -118,20 +131,16 @@ router.post('/create/:boardid/:type/', async (req, res, next) => {
 
 
 /* POST Update item . */
-router.post('/update/:id', async (req, res) => {
+router.post('/update/:id', checkAccess(), async (req, res) => {
     const item = req.body;
-    const itemId = req.params.id;
+    const id = req.params.id;
 
-    Item.findByIdAndUpdate(itemId, item, {new: true }, (err, document) => {
+    Item.findByIdAndUpdate(id, item, {new: true }, (err, document) => {
         if (err) {
             console.log(err);
             return res.json({ success: false, title: err.name, message: err.message });
         } else if (!document) {
-            return res.json({
-                success: false,
-                title: "ItemDoesNotExist",
-                message: `The Item with id ${itemId} i does not exist.`
-            });
+            return sendDoesNotExists(res, id);
         } else {
             console.log(`Item ${document.title} updated`);
             return res.json({
@@ -144,7 +153,7 @@ router.post('/update/:id', async (req, res) => {
 });
 
 /* DELETE Insert an item from db . */
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', checkAccess(), async (req, res) => {
     let id = req.params.id;
 
     console.log(id);
@@ -153,11 +162,7 @@ router.delete('/delete/:id', async (req, res) => {
             console.log(err);
             return res.json({ success: false, title: err.name, message: err.message });
         } else if (!document) {
-            return res.json({
-                success: false,
-                title: "ItemDoesNotExist",
-                message: `The Item with id ${id} does not exist.`
-            });
+            return sendDoesNotExists(res, id);
         } else {
             return res.json({
                 success: true,
@@ -168,5 +173,24 @@ router.delete('/delete/:id', async (req, res) => {
     });
 });
 
+
+/* GET Get all Boards releated to user */
+router.get('/board/:id', checkAccessBoard(), async (req, res) => {
+    let id = req.params.id;
+
+    console.log("Board id: ", id);
+    Item.find({board: id}, (err, documents) => {
+        if (err) {
+            console.log(err);
+            res.json({ success: false, title: err.name, message: err.message });
+        } else if (!documents) {
+            console.log("cant find item");
+            return sendDoesNotExists(res, id);
+        } else {
+            console.log(documents);
+            return res.json(documents);
+        }
+    });
+});
 
 module.exports = router;

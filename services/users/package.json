@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "./node_modules/nodemon/bin/nodemon.js src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc --all --reporter=html --reporter=text mocha --reporter=dot tests/**/*.js",
+    "eslint": "./node_modules/.bin/eslint .; exit 0",
+    "posttest": "npm run eslint"
   },
   "author": "Niclas Söderkvist",
   "license": "ISC",

@@ -23,27 +23,27 @@ module.exports = () => {
 
         //console.log('Decoded: ', req.decoded);
         // First we get the item and retrive the board id that we want to check
-        const boardId = await Item.findById(req.params.id, (err, item) => {
+        const item = await Item.findById(req.params.id, (err, document) => {
             if (err) {
                 console.log(err);
                 return res.json({ success: false, title: err.name, message: err.message });
-            } else if (!item) {
-                return res.json({
-                    success: false,
-                    title: "ItemDoesNotExist",
-                    message: `The Item with does not exist.`
-                });
             }
-            //console.log(item.board);
-            return item;
+            return document;
         });
 
-        //console.log('item boardID: ', boardId.board);
+        if (!item) {
+            console.log("No item in middleware");
+            return res.json({
+                success: false,
+                title: "ItemDoesNotExist",
+                message: `The Item with does not exist.`
+            });
+        }
 
         // Then we get the board so that we can check if the owner and/or users
         // have access to the board/item.
         // console.log('item boardID: ', boardId.board);
-        const board = await Board.findById(boardId.board, (err, document) => {
+        Board.findById(item.board, (err, document) => {
             if (err) {
                 console.log(err);
                 return res.json({ success: false, title: err.name, message: err.message });
@@ -53,23 +53,23 @@ module.exports = () => {
                     title: "BoardDoesNotExist",
                     message: `The Board with does not exist.`
                 });
+            } else {
+                if (document.owner === username || document.users.indexOf(username) > -1) {
+                    return next();
+                } else {
+                    return res.status(403).send({
+                        success: false,
+                        status: 403,
+                        title: "NotAuthorized",
+                        description: 'You are not authorized.',
+                    });
+                }
             }
-            // console.log('Board:', document);
-            return document;
         });
 
         // console.log('board owner: ', board.owner);
         // console.log('board users: ', board.users);
 
-        if (board.owner === username || board.users.indexOf(username) > -1) {
-            return next();
-        } else {
-            return res.status(403).send({
-                success: false,
-                status: 403,
-                title: "NotAuthorized",
-                description: 'You are not authorized.',
-            });
-        }
+
     };
 };
