@@ -18,6 +18,8 @@ const checkAccessBoard = require('./middleware/access-to-board');
 const ObjectId = mongoose.Schema.ObjectId;
 var router = express.Router();
 
+const allowedTypes = ["backlog", "inprogress", "test", "done"];
+
 router.use(jwtVerify(config.jwtsecret));
 
 mongoose.connect(config.database, {useMongoClient: true });
@@ -65,21 +67,19 @@ router.get('/show/:id', checkAccess(), async (req, res) => {
 
 /* POST Insert Item into db . */
 
-router.post('/create/:boardid/:type/', checkAccess(), async (req, res) => {
+router.post('/create/:boardid', checkAccess(), async (req, res) => {
     const item = req.body;
     const boardId = req.params.boardid;
-    //const itemId = req.params.itemid;
-    const type = req.params.type;
+    //const type = req.params.type;
 
-    console.log(type);
+    console.log(item.type);
+    const typeIndex = allowedTypes.indexOf(item.type);
 
-    const typeExists = ["backlog", "inprogress", "test", "done"].indexOf(type);
-
-    if (typeExists < 0) {
+    if (typeIndex < 0) {
         return res.json({
             success: false,
             title: "WrongType",
-            message: `The type ${type} is not allowed.`
+            message: `The type ${item.type} is not allowed.`
         });
     }
 
@@ -95,7 +95,7 @@ router.post('/create/:boardid/:type/', checkAccess(), async (req, res) => {
         return res.json({
             success: false,
             title: "BoardDoesNotExist",
-            message: `The board with id ${type} i does not exist.`
+            message: `The board with id ${item.type} i does not exist.`
         });
     }
 
@@ -104,7 +104,7 @@ router.post('/create/:boardid/:type/', checkAccess(), async (req, res) => {
     const newItem = new Item( {
         title: item.title,
         description: item.description,
-        type,
+        type: item.type,
         duedate: item.duedate,
         position: item.position,
         createdby: item.createdby,
@@ -135,6 +135,18 @@ router.post('/update/:id', checkAccess(), async (req, res) => {
     const item = req.body;
     const id = req.params.id;
 
+    if (item.type) {
+        const typeIndex = allowedTypes.indexOf(item.type);
+
+        if (typeIndex < 0) {
+            return res.json({
+                success: false,
+                title: "WrongType",
+                message: `The type ${item.type} is not allowed.`
+            });
+        }
+    }
+
     Item.findByIdAndUpdate(id, item, {new: true }, (err, document) => {
         if (err) {
             console.log(err);
@@ -152,7 +164,7 @@ router.post('/update/:id', checkAccess(), async (req, res) => {
     });
 });
 
-/* DELETE Insert an item from db . */
+/* DELETE Delete an item from the db . */
 router.delete('/delete/:id', checkAccess(), async (req, res) => {
     let id = req.params.id;
 
@@ -174,7 +186,7 @@ router.delete('/delete/:id', checkAccess(), async (req, res) => {
 });
 
 
-/* GET Get all Boards releated to user */
+/* GET Get all Items releated to the Board */
 router.get('/board/:id', checkAccessBoard(), async (req, res) => {
     let id = req.params.id;
 
@@ -187,7 +199,7 @@ router.get('/board/:id', checkAccessBoard(), async (req, res) => {
             console.log("cant find item");
             return sendDoesNotExists(res, id);
         } else {
-            console.log(documents);
+            //console.log(documents);
             return res.json(documents);
         }
     });
