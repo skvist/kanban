@@ -32,8 +32,8 @@
 </template>
 
 <script>
-    import LoginForm from './layout/LoginForm';
-    import RegisterForm from './layout/RegisterForm';
+    import LoginForm from './forms/LoginForm';
+    import RegisterForm from './forms/RegisterForm';
 
     export default {
         name: 'Start',

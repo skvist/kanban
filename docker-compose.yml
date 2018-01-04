@@ -39,3 +39,20 @@ services:
         ports:
             - 27018:27018
         command: mongod --port 27018
+
+    webdev:
+        image: node:8.9-alpine
+        ports:
+            - "8090:8080"
+        user: "node"
+        working_dir: /home/node/app
+        volumes:
+            - ./services/web/:/home/node/app
+        command: "npm run dev"
+
+    webprod:
+        image: nginx:stable-alpine
+        volumes:
+            - ./services/web/dist:/usr/share/nginx/html
+        ports:
+            - "8080:80"

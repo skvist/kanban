@@ -45,7 +45,7 @@ router.get('/', function(req, res) {
 
 /* GET all users. TODO: Remove */
 router.get('/all', async (req, res) => {
-    const showUsers = await User.findOne({}).select({'password': false, 'admin': false});
+    const showUsers = await User.find({}).select({'password': false, 'admin': false});
 
     res.json(showUsers);
 });

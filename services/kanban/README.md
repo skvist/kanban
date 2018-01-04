@@ -1,10 +1,6 @@
-# Kanban API
+# Kanban Service API
 
-Varje bräde består av fyra kolumner - Backlog, In Progress, Test och Done, som sedan kan innehålla featuers (items) som ska utföras och sedan flyttas till nästa kolumn (type).
-
-
-## Public
-
+Varje bräde består av fyra kolumner - Backlog, In Progress, Test och Done, som sedan kan innehålla featuers/objekt (items) som ska utföras och sedan flyttas till nästa kolumn (type).
 
 
 ## Boards

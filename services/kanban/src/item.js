@@ -66,7 +66,6 @@ router.get('/show/:id', checkAccess(), async (req, res) => {
 });
 
 /* POST Insert Item into db . */
-
 router.post('/create/:boardid', checkAccess(), async (req, res) => {
     const item = req.body;
     const boardId = req.params.boardid;

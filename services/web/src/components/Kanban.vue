@@ -20,11 +20,11 @@
 
         <div class="columns" v-for="boards in chunkedBoards">
             <div class="column" v-for="board in boards">
-                <a href="#" class="hover-box">
+                <router-link :to="{ name: 'KanbanBoard', params: { id: board._id }}" class="hover-box">
                 <div class="box">
-                     <h3>{{board.name}}</h3>
+                     <h3>{{ board.title }}</h3>
                 </div>
-                </a>
+                </router-link>
             </div>
         </div>
 
@@ -34,7 +34,11 @@
 <script>
     import chunk from 'chunk';
     import auth from '@/auth';
-    import CreateKanbanForm from './layout/CreateKanbanForm';
+    import CreateKanbanForm from './forms/CreateKanbanForm';
+
+    const axios = require('axios');
+    const config = require('@/config');
+
 
     export default {
         name: 'Start',
@@ -45,14 +49,30 @@
             return {
                 isFormActive: false,
                 boards: [
-                    { id: 1, name: 'Projekt1' },
-                    { id: 2, name: 'Hemligt projekt' },
-                    { id: 3, name: 'Nytt projekt' },
-                    { id: 4, name: 'Exjobb' },
-                    { id: 5, name: 'Ramverk2 projekt' },
                 ],
             };
         },
+        methods: {
+            getBoards() {
+                // eslint-disable-next-line
+                console.log('getBoads');
+
+                axios.get(`${config.kanbanUrl}:${config.kanbanPort}/api/board/user?token=${localStorage.token}`)
+                .then((response) => {
+                    // eslint-disable-next-line
+                    console.log(response.data);
+                    this.boards = response.data;
+                }).catch((err) => {
+                    // eslint-disable-next-line
+                    console.log(err);
+                });
+            },
+        },
+        beforeMount() {
+            this.getBoards();
+        },
+
+
         beforeRouteEnter(to, from, next) {
             if (auth.checkAuth()) {
                 next();

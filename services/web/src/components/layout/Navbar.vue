@@ -83,7 +83,7 @@
 
 <script>
 import auth from '../../auth';
-import LoginForm from '../layout/LoginForm';
+import LoginForm from '../forms/LoginForm';
 
 
 export default {

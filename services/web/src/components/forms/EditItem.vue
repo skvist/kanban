@@ -2,19 +2,25 @@
     <form action="">
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Skapa ett nytt bräde</p>
+                <p class="modal-card-title">Item</p>
             </header>
             <section class="modal-card-body">
+                <p>Skapad: {{ item.created.substring(0,10) }}</p>
                 <b-field label="Namn">
                     <b-input
-                        v-model="name"
-                        placeholder="Namn"
+                        v-model="item.title"
                         required>
                     </b-input>
                 </b-field>
+                <b-field label="Beskrivning">
+                <b-input maxlength="400" type="textarea" :value="item.description"></b-input>
+                </b-field>
+
+
+
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-primary" @click="create">Skapa Kanban-bräda</button>
+                <button class="button is-primary" @click="create">Uppdatera</button>
                 <button class="button" type="button" @click="$parent.close()">Stäng</button>
             </footer>
         </div>
@@ -22,45 +28,56 @@
 </template>
 
 <script>
+    const axios = require('axios');
+    const config = require('@/config');
+
     export default {
         data() {
             return {
-                name: '',
+                title: '',
+                description: '',
             };
+        },
+        props: {
+            item: {
+                type: Object,
+            },
         },
         methods: {
             create() {
                 // eslint-disable-next-line
-                console.log(this.name);
+                console.log(this.title);
 
-                /* axios.post(`${config.userUrl}:${config.userPort}/api/login`, {
-                    username: this.username,
-                    password: this.password,
+                axios.post(`${config.kanbanUrl}:${config.kanbanPort}/api/board/create?token=${localStorage.token}`, {
+                    title: this.title,
+                    description: this.description,
+                    owner: localStorage.username,
+                    users: [localStorage.username],
+
                 }).then((response) => {
                     // eslint-disable-next-line
                     console.log(response.data);
                     if (response.data.success) {
-                        localStorage.username = response.data.username;
-                        localStorage.token = response.data.token;
                         this.$toast.open({
-                            message: 'Inloggningen lyckades, välkommen in!',
+                            message: 'Ett nytt Kanban-bräde har skapats!',
                             type: 'is-success',
                             duration: 2000,
                             position: 'is-top',
                         });
+                        this.$parent.close();
                         this.$router.push('/kanban');
                     } else {
                         this.$toast.open({
                             message: `Felmeddelande från servern: ${response.data.title}`,
                             type: 'is-danger',
-                            duration: 5000,
+                            duration: 2000,
                             position: 'is-top',
                         });
                     }
                 }).catch((err) => {
                     // eslint-disable-next-line
                     console.log(err);
-                }); */
+                });
             },
         },
     };
@@ -70,6 +87,7 @@
     .modal-card {
         width: auto;
     }
+
     .field.is-grouped .field + .field {
         margin-left: 0;
     }
