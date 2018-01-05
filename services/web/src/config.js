@@ -8,9 +8,8 @@ const settings = {
     kanbanUrl: 'http://localhost',
     kanbanPort: 3002,
 
-
     chatUrl: 'ws://localhost',
-    chatPort: 3001,
+    chatPort: 3003,
 };
 
 module.exports = settings;

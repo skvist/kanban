@@ -39,7 +39,7 @@
 
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-primary">Registrera</button>
+                <button class="button is-primary" @click="register">Registrera</button>
                 <button class="button" type="button" @click="$parent.close()">Stäng</button>
             </footer>
         </div>
@@ -47,8 +47,54 @@
 </template>
 
 <script>
+    const axios = require('axios');
+    const config = require('@/config');
+
     export default {
-        props: ['username', 'email', 'name', 'password'],
+        data() {
+            return {
+                username: '',
+                email: '',
+                name: '',
+                password: '',
+            };
+        },
+        methods: {
+            register() {
+                // eslint-disable-next-line
+                console.log(this.username);
+
+                axios.post(`${config.userUrl}:${config.userPort}/api/create`, {
+                    username: this.username,
+                    password: this.password,
+                    email: this.email,
+                    name: this.name,
+                }).then((response) => {
+                    // eslint-disable-next-line
+                    console.log(response.data);
+                    if (response.data.success) {
+                        this.$toast.open({
+                            message: 'Registreringen lyckades, vänligen logga in!',
+                            type: 'is-success',
+                            duration: 2000,
+                            position: 'is-top',
+                        });
+                        // eslint-disable-next-line
+                        this.$parent.close();
+                    } else {
+                        this.$toast.open({
+                            message: `Felmeddelande från servern: ${response.data.title}`,
+                            type: 'is-danger',
+                            duration: 5000,
+                            position: 'is-top',
+                        });
+                    }
+                }).catch((err) => {
+                    // eslint-disable-next-line
+                    console.log(err);
+                });
+            },
+        },
     };
 </script>
 

@@ -19,15 +19,18 @@ module.exports = () => {
         }
 
         const username = req.decoded.username;
+        const id = req.params.id || req.params.boardid;
 
         // Then we get the board so that we can check if the owner and/or users
         // have access to the board/item.
         // console.log('item boardID: ', boardId.board);
-        Board.findById(req.params.id, (err, document) => {
+        Board.findById(id, (err, document) => {
+            console.log(id);
             if (err) {
                 console.log(err);
                 return res.json({ success: false, title: err.name, message: err.message });
             } else if (!document) {
+                console.log("Middleware: BoardDoesNotExist");
                 return res.json({
                     success: false,
                     title: "BoardDoesNotExist",

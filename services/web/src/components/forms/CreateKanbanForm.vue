@@ -60,8 +60,9 @@
                             duration: 2000,
                             position: 'is-top',
                         });
+                        this.$emit('boardadded');
                         this.$parent.close();
-                        this.$router.push('/kanban');
+                        // this.$router.push('/kanban');
                     } else {
                         this.$toast.open({
                             message: `Felmeddelande från servern: ${response.data.title}`,

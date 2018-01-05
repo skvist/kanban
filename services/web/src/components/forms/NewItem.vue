@@ -2,18 +2,17 @@
     <form action="">
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Artikel</p>
+                <p class="modal-card-title">Ny artikel</p>
             </header>
             <section class="modal-card-body">
-                <p>Skapad: {{ item.created.substring(0,10) }}</p>
                 <b-field label="Namn">
                     <b-input
-                        v-model="item.title"
+                        v-model="title"
                         required>
                     </b-input>
                 </b-field>
                 <b-field label="Beskrivning">
-                <b-input maxlength="400" type="textarea" v-model="item.description" :value="item.description"></b-input>
+                <b-input maxlength="400" type="textarea" v-model="description" :value="description"></b-input>
                 </b-field>
 
             </section>
@@ -33,13 +32,19 @@
     export default {
         data() {
             return {
-                /* title: '',
-                description: '', */
+                title: '',
+                description: '',
             };
         },
         props: {
-            item: {
-                type: Object,
+            type: {
+                type: String,
+            },
+            position: {
+                type: Number,
+            },
+            board: {
+                type: String,
             },
         },
         methods: {
@@ -47,20 +52,25 @@
                 // eslint-disable-next-line
                 console.log(this.title);
 
-                axios.post(`${config.kanbanUrl}:${config.kanbanPort}/api/item/update/${this.item._id}?token=${localStorage.token}`, {
-                    title: this.item.title,
-                    description: this.item.description,
-                    modified: new Date(),
+                axios.post(`${config.kanbanUrl}:${config.kanbanPort}/api/item/create/${this.board}?token=${localStorage.token}`, {
+                    title: this.title,
+                    description: this.description,
+                    type: this.type,
+                    createdby: localStorage.username,
+                    position: this.position,
+
                 }).then((response) => {
                     // eslint-disable-next-line
                     console.log(response.data);
                     if (response.data.success) {
                         this.$toast.open({
-                            message: 'Uppdaterad',
+                            message: 'Tillagd',
                             type: 'is-success',
                             duration: 500,
                             position: 'is-top',
                         });
+                        this.$emit('itemadded');
+
                         this.$parent.close();
                     } else {
                         this.$toast.open({

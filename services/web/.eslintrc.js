@@ -29,6 +29,7 @@ module.exports = {
       js: 'never',
       vue: 'never'
     }],
+    "no-console": 0,
     "indent": ["error", 4],
     // disallow reassignment of function parameters
     // disallow parameter object manipulation except for specific exclusions

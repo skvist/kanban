@@ -10,7 +10,7 @@
                         Skapa en ny Kanban-bräda
                     </button>
                     <b-modal :active.sync="isFormActive" has-modal-card>
-                        <create-kanban-form></create-kanban-form>
+                        <create-kanban-form v-on:boardadded="getBoards"></create-kanban-form>
                     </b-modal>
                 </p>
                 </div>
