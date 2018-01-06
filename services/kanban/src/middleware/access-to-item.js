@@ -66,10 +66,5 @@ module.exports = () => {
                 }
             }
         });
-
-        // console.log('board owner: ', board.owner);
-        // console.log('board users: ', board.users);
-
-
     };
 };

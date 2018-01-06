@@ -59,7 +59,7 @@ router.get('/show/:username', async (req, res) => {
 });
 
 /* POST Insert user into db . */
-router.post('/create', async (req, res, next) => {
+router.post('/create', async (req, res) => {
     const data = req.body;
 
     var newUser = new User({
@@ -156,7 +156,6 @@ router.post('/login', async (req, res) => {
             }
         });
     }
-
 });
 
 

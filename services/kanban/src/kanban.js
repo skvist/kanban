@@ -1,26 +1,13 @@
 const express = require('express');
-const jwtVerify = require('express-jwt-verify');
 const mongoose = require('mongoose');
 const config = require('./config');
 const Board = require('./models/board');
 const Item = require('./models/item');
-const checkAccess = require('./middleware/access-to-item');
-const checkAccessBoard = require('./middleware/access-to-board');
 
-/* const mongo = require('mongodb');
-    const ObjectId = mongo.ObjectID;
-    const MongoClient = require('mongodb').MongoClient; */
-
-//uniqueValidator = require('mongoose-unique-validator');
-
-// var ObjectId = mongoose.Schema.ObjectId;
 var router = express.Router();
 
 mongoose.connect(config.database, {useMongoClient: true });
 mongoose.Promise = global.Promise;
-//User.schema.plugin(uniqueValidator);
-
-
 
 /* GET Kanban listing. */
 router.get('/', function(req, res) {
@@ -67,7 +54,5 @@ router.get('/example', function(req, res) {
 
     res.json({ success: true, message: "Kanban board and items created!" });
 });
-
-
 
 module.exports = router;

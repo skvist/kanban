@@ -128,16 +128,18 @@ router.get('/user', jwtVerify(config.jwtsecret), async (req, res) => {
     let username = req.decoded.username;
 
     console.log(username);
-    const showBoards = await Board.find({$or: [{owner: username }, {users: username}]}, (err, document) => {
-        if (err) {
-            console.log(err);
-            res.json({ success: false, title: err.name, message: err.message });
-        } else if (!document) {
-            return sendDoesNotExists(res, username);
-        }
-        console.log(document);
-        return document;
-    });
+    const showBoards = await Board.find(
+        {$or: [{owner: username }, {users: username}]},
+        (err, document) => {
+            if (err) {
+                console.log(err);
+                res.json({ success: false, title: err.name, message: err.message });
+            } else if (!document) {
+                return sendDoesNotExists(res, username);
+            }
+            console.log(document);
+            return document;
+        });
 
     res.json(showBoards);
 });

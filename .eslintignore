@@ -11,13 +11,13 @@ selenium-debug.log
 coverage/
 .nyc/
 .nyc_output/
-data/
-data/
 
-# Editor directories and files
 .idea
 .vscode
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
+package-lock.json
+package.json
+README.md

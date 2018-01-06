@@ -7,15 +7,6 @@ const Item = require('./models/item');
 const checkAccess = require('./middleware/access-to-item');
 const checkAccessBoard = require('./middleware/access-to-board');
 
-// const checkAccessBoard = require('./middleware/access-to-board');
-
-/* const mongo = require('mongodb');
-    const ObjectId = mongo.ObjectID;
-    const MongoClient = require('mongodb').MongoClient; */
-
-//uniqueValidator = require('mongoose-unique-validator');
-
-const ObjectId = mongoose.Schema.ObjectId;
 var router = express.Router();
 
 const allowedTypes = ["backlog", "inprogress", "test", "done"];

@@ -3,7 +3,6 @@
 module.exports = function(server) {
     const io = require('socket.io')(server);
 
-    let rooms = {};
     let userLists = {};
 
     io.on('connection', function (socket) {
@@ -16,6 +15,7 @@ module.exports = function(server) {
 
             userLists[msg.board] = userLists[msg.board] || [];
             const inRoom = userLists[msg.board].indexOf(msg.username);
+
             if (inRoom === -1) {
                 userLists[msg.board].push(msg.username);
             }
@@ -26,6 +26,7 @@ module.exports = function(server) {
         socket.on('leaveroom', (msg) => {
             console.log("Leave room");
             var index = userLists[msg.board].indexOf(msg.username);
+
             userLists[msg.board].splice(index, 1);
 
             io.to(msg.board).emit('room', userLists[msg.board]);
@@ -34,19 +35,11 @@ module.exports = function(server) {
         socket.on('updated', (msg) => {
             console.log("Send update command", msg.board);
             socket.join(msg.board);
-           /*  io.to(msg.board).emit('itemsupdated', msg.username);*/
-            // io.emit('updateitems', msg.username);
             io.sockets.in(msg.board).emit('updateitems', msg.username);
-
         });
 
-        socket.on('disconnect', function(){
+        socket.on('disconnect', function() {
             console.log('user disconnected');
-          });
+        });
     });
-}
-
-
-
-
-
+};

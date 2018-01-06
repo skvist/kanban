@@ -4,23 +4,35 @@
   "description": "Kanban Board Project (final project for ramverk2 @ BTH)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run test-users; npm run test-kanban; npm run test-realtime; npm run test-web",
+    "test-users": "mocha tests/users-test/*.js",
+    "test-kanban": "mocha tests/kanban-test/*.js",
+    "test-realtime": "mocha tests/realtime-test/*.js",
+    "test-web": "echo \"testweb - Nothing specified\" && exit 0",
+    "posttest": "npm run lint",
+    "postinstall": "(cd ./services/kanban/ && npm install);(cd ./services/users/ && npm install);(cd ./services/realtime/ && npm install);(cd ./services/web/ && npm install)",
+    "lint": "npm run lint-users && npm run lint-kanban && npm run lint-realtime && npm run lint-web",
+    "lint-users": "./node_modules/.bin/eslint --config .eslintrc.json \"services/users/**\"",
+    "lint-kanban": "./node_modules/.bin/eslint --config .eslintrc.json \"services/kanban/**\"",
+    "lint-realtime": "./node_modules/.bin/eslint --config .eslintrc.json \"services/realtime/**\"",
+    "lint-web": "(cd ./services/web/ && npm run lint)"
   },
   "author": "Niclas Söderkvist",
   "license": "ISC",
   "dependencies": {
-    "express": "~4.15.5",
-    "jsonwebtoken": "^8.1.0",
-    "body-parser": "~1.18.2",
-    "cookie-parser": "~1.4.3"
+    "eslint-plugin-json": "^1.2.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "eslint": "^4.13.1",
+    "codecov": "^3.0.0",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.10.0",
+    "eslint-config-defaults": "^9.0.0",
+    "eslint-plugin-chai-friendly": "^0.4.0",
+    "eslint-plugin-mocha": "^4.11.0",
     "eslint-plugin-react": "^7.5.1",
+    "jsonlint": "^1.6.2",
     "mocha": "^4.0.1",
-    "nodemon": "^1.12.7",
-    "nyc": "^11.3.0",
-    "request": "^2.83.0"
+    "nyc": "^11.2.1"
   }
 }
