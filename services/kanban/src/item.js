@@ -17,14 +17,20 @@ mongoose.connect(config.database, {useMongoClient: true });
 mongoose.Promise = global.Promise;
 //User.schema.plugin(uniqueValidator);
 
-function sendDoesNotExists(res, id) {
+/**
+ * Middleware access-to-item will check if the item does not exists and send
+ * the response, so no need to do it in the routes.
+ * Same goes for access-to-board
+ */
+
+/* function sendDoesNotExists(res, id) {
     return res.json({
         success: false,
         title: "ItemDoesNotExist",
         message: `The Item with id ${id} does not exist.`
     });
 }
-
+ */
 /* GET Kanban Item listing. */
 router.get('/', (req, res) => {
     res.send('Placeholder for Kanban Item endpoint');
@@ -42,16 +48,7 @@ router.get('/show/:id', checkAccess(), async (req, res) => {
     let id = req.params.id;
 
     console.log(id);
-    const showItem = await Item.findById(id, (err, document) => {
-        if (err) {
-            console.log(err);
-            res.json({ success: false, title: err.name, message: err.message });
-        } else if (!document) {
-            return sendDoesNotExists(res, id);
-        }
-        //console.log(document);
-        return document;
-    });
+    const showItem = await Item.findById(id);
 
     res.json(showItem);
 });
@@ -73,21 +70,15 @@ router.post('/create/:boardid', checkAccessBoard(), async (req, res) => {
         });
     }
 
-    const findBoard = await Board.findById(boardId, (err, document) => {
-        if (err) {
-            console.log(err);
-            res.json({ success: false, title: err.name, message: err.message });
-        }
-        return document;
-    });
+    const findBoard = await Board.findById(boardId);
 
-    if (!findBoard) {
+    /*  if (!findBoard) {
         return res.json({
             success: false,
             title: "BoardDoesNotExist",
             message: `The board with id ${item.type} i does not exist.`
         });
-    }
+    } */
 
     console.log(boardId);
 
@@ -140,9 +131,9 @@ router.post('/update/:id', checkAccess(), async (req, res) => {
     Item.findByIdAndUpdate(id, item, {new: true }, (err, document) => {
         if (err) {
             console.log(err);
-            return res.json({ success: false, title: err.name, message: err.message });
-        } else if (!document) {
-            return sendDoesNotExists(res, id);
+            // return res.json({ success: false, title: err.name, message: err.message });
+        /* } else if (!document) {
+            return sendDoesNotExists(res, id); */
         } else {
             console.log(`Item ${document.title} updated`);
             return res.json({
@@ -162,9 +153,9 @@ router.delete('/delete/:id', checkAccess(), async (req, res) => {
     Item.findByIdAndRemove(id, (err, document) => {
         if (err) {
             console.log(err);
-            return res.json({ success: false, title: err.name, message: err.message });
-        } else if (!document) {
-            return sendDoesNotExists(res, id);
+            // return res.json({ success: false, title: err.name, message: err.message });
+        /* } else if (!document) {
+            return sendDoesNotExists(res, id); */
         } else {
             return res.json({
                 success: true,
@@ -184,10 +175,10 @@ router.get('/board/:id', checkAccessBoard(), async (req, res) => {
     Item.find({board: id}, (err, documents) => {
         if (err) {
             console.log(err);
-            res.json({ success: false, title: err.name, message: err.message });
-        } else if (!documents) {
+            // res.json({ success: false, title: err.name, message: err.message });
+        /* } else if (!documents) {
             console.log("cant find item");
-            return sendDoesNotExists(res, id);
+            return sendDoesNotExists(res, id); */
         } else {
             //console.log(documents);
             return res.json(documents);

@@ -4,11 +4,11 @@
   "description": "Kanban Board Project (final project for ramverk2 @ BTH)",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test-users; npm run test-kanban; npm run test-realtime; npm run test-web",
+    "test": "nyc --all --reporter=html --reporter=text mocha --exit --reporter=spec tests/**/*.js",
     "pretest-users": "export DBWEBB_DSN=mongodb://localhost:3010/testkanban",
-    "test-users": "nyc --all --reporter=html --reporter=text mocha --exit --reporter=spec -x \"server.js\" tests/users-test/*.js",
+    "test-users": "nyc --all --reporter=html --reporter=text mocha --exit --reporter=spec tests/users-test/*.js",
     "pretest-kanban": "export DBWEBB_DSN=mongodb://localhost:3010/testkanban",
-    "test-kanban": "mocha --exit tests/kanban-test/*.js",
+    "test-kanban": "nyc --all --reporter=html --reporter=text mocha --exit --reporter=spec tests/kanban-test/*.js",
     "test-realtime": "mocha tests/realtime-test/*.js",
     "test-web": "echo \"testweb - Nothing specified\" && exit 0",
     "posttest": "npm run lint",
@@ -17,13 +17,11 @@
     "lint-users": "./node_modules/.bin/eslint --config .eslintrc.json \"services/users/**\"",
     "lint-kanban": "./node_modules/.bin/eslint --config .eslintrc.json \"services/kanban/**\"",
     "lint-realtime": "./node_modules/.bin/eslint --config .eslintrc.json \"services/realtime/**\"",
-    "lint-web": "(cd ./services/web/ && npm run lint)"
+    "lint-web": "(cd ./services/web/ && npm run lint)",
+    "scrutinizer": "nyc --all --reporter=clover mocha --exit --reporter=spec tests/**/*.js"
   },
   "author": "Niclas Söderkvist",
   "license": "ISC",
-  "dependencies": {
-    "eslint-plugin-json": "^1.2.0"
-  },
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
@@ -34,16 +32,12 @@
     "eslint-plugin-chai-friendly": "^0.4.0",
     "eslint-plugin-mocha": "^4.11.0",
     "eslint-plugin-react": "^7.5.1",
-    "jasmine": "^2.8.0",
+    "eslint-plugin-json": "^1.2.0",
     "jsonlint": "^1.6.2",
     "jsonwebtoken": "^8.1.0",
     "mocha": "^4.0.1",
-    "mockgoose": "^7.3.3",
-    "mockgoose-fix": "^7.3.6",
-    "mongodb-download": "^2.2.3",
     "mongoose": "^5.0.0-rc2",
     "nyc": "^11.2.1",
-    "request": "^2.83.0",
-    "sinon": "^4.1.3"
+    "request": "^2.83.0"
   }
 }

@@ -15,13 +15,13 @@ mongoose.Promise = global.Promise;
 //User.schema.plugin(uniqueValidator);
 
 
-function sendDoesNotExists(res, id) {
+/* function sendDoesNotExists(res, id) {
     return res.json({
         success: false,
         title: "BoardDoesNotExist",
         message: `The Board with id ${id} does not exist.`
     });
-}
+} */
 
 /* GET Kanban Board listing. */
 router.get('/', function(req, res) {
@@ -42,9 +42,9 @@ router.get('/show/:id', checkAccess(), async (req, res) => {
     const showBoard = await Board.findById(id, function (err, document) {
         if (err) {
             console.log(err);
-            return res.json({ success: false, title: err.name, message: err.message });
+        /*     return res.json({ success: false, title: err.name, message: err.message });
         } else if (!document) {
-            return sendDoesNotExists(res, id);
+            return sendDoesNotExists(res, id); */
         }
         return document;
     });
@@ -89,9 +89,9 @@ router.post('/update/:id', checkAccess(), async (req, res) => {
     Board.findByIdAndUpdate(boardId, board, {new: true }, (err, document) => {
         if (err) {
             console.log(err);
-            return res.json({ success: false, title: err.name, message: err.message });
+            /* return res.json({ success: false, title: err.name, message: err.message });
         } else if (!document) {
-            return sendDoesNotExists(res, boardId);
+            return sendDoesNotExists(res, boardId); */
         } else {
             console.log(`Board ${document.title} updated`);
             return res.json({
@@ -110,9 +110,9 @@ router.delete('/delete/:id', checkAccess(), async (req, res) => {
     Board.findByIdAndRemove(id, (err, document) => {
         if (err) {
             console.log(err);
-            return res.json({ success: false, title: err.name, message: err.message });
+            /* return res.json({ success: false, title: err.name, message: err.message });
         } else if (!document) {
-            return sendDoesNotExists(res, id);
+            return sendDoesNotExists(res, id); */
         } else {
             return res.json({
                 success: true,
@@ -133,12 +133,14 @@ router.get('/user', jwtVerify(config.jwtsecret), async (req, res) => {
         (err, document) => {
             if (err) {
                 console.log(err);
-                res.json({ success: false, title: err.name, message: err.message });
+                /* res.json({ success: false, title: err.name, message: err.message });
             } else if (!document) {
                 return sendDoesNotExists(res, username);
+            } */
+            // console.log(document);
+            } else {
+                return document;
             }
-            console.log(document);
-            return document;
         });
 
     res.json(showBoards);

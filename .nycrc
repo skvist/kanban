@@ -1,0 +1,10 @@
+{
+    "exclude": [
+        "services/web",
+        "coverage",
+        "tests",
+        "services/kanban/src/server.js",
+        "services/users/src/server.js",
+        "services/realtime/src/server.js"
+    ]
+}

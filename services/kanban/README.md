@@ -366,8 +366,8 @@ DELETE /api/item/delete/5a3eb44fec502a009528f524
 
     {
         success: true,
-        title: "ItemUpdated",
-        message: "Item Feature X Updated."
+        title: "ItemDeleted",
+        message: "Item Feature X deleted."
     }
 
 </details>

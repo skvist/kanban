@@ -17,6 +17,7 @@ var Item = require('../../services/kanban/src/models/item');
 
 var config = require('../../services/kanban/src/config');
 var token;
+var testBoardId;
 
 chai.use(chaiHttp);
 
@@ -46,7 +47,7 @@ after(function (done) {
     }
 });
 
-describe('Kanban routes/mongo tests', function () {
+describe('Kanban Board routes/mongo tests', function () {
     before(function() {
         const payload = {
             username: 'doe',
@@ -56,6 +57,7 @@ describe('Kanban routes/mongo tests', function () {
         token = jwt.sign(payload, config.jwtsecret, {
             expiresIn: 60*60*24
         });
+        console.log(token);
     });
 
 
@@ -70,113 +72,85 @@ describe('Kanban routes/mongo tests', function () {
             });
     }));
 
-    /* it('should get All users (1 doe)', (function(done) {
+    it('should try to get all boards without token (NoTokenProvided)', (function(done) {
         chai.request(app)
-            .get('/api/all')
+            .get(`/api/board/all`)
             .end(function(err, res) {
-                res.should.have.status(200);
-                res.body[0].username.should.be.eql('doe');
+                res.should.have.status(403);
+                res.body.success.should.be.eql(false);
+                res.body.title.should.be.eql('NoTokenProvided');
                 expect(res).to.be.json;
                 done();
             });
     }));
 
-
-    it('should get user doe', (function(done) {
+    it('should get All Boards (1)', (function(done) {
         chai.request(app)
-            .get('/api/show/doe')
+            .get(`/api/board/all?token=${token}`)
             .end(function(err, res) {
                 res.should.have.status(200);
+                res.body[0].title.should.be.eql('Ramverk2 Projekt');
                 expect(res).to.be.json;
-                res.body.email.should.be.eql('johndoe@example.com');
+                expect(res.body).to.be.an('array');
+                expect(res.body).to.have.length(1);
+                testBoardId = res.body[0]._id;
                 done();
             });
     }));
 
-    it('should get no user', (function(done) {
+    it('should get one board by ID', (function(done) {
         chai.request(app)
-            .get('/api/show/nouser')
+            .get(`/api/board/show/${testBoardId}?token=${token}`)
             .end(function(err, res) {
                 res.should.have.status(200);
+                res.body.title.should.be.eql('Ramverk2 Projekt');
                 expect(res).to.be.json;
-                should.equal(res.body, null);
                 done();
             });
     }));
 
-    it('should create a new user', (function(done) {
+    it('should create a new board and return success (BoardCreated)', (function(done) {
         chai.request(app)
-            .post('/api/create')
+            .post(`/api/board/create/?token=${token}`)
             .send({
-                username: 'janedoe',
-                name: 'Jane Doe',
-                email: 'janedoe@example.com',
-                password: 'password',
+                title: 'TestBoard',
+                description: 'Test Desc',
+                owner: 'doe',
+                users: ['doe'],
             })
             .end(function(err, res) {
                 res.should.have.status(200);
+                res.body.title.should.be.eql('BoardCreated');
+                res.body.success.should.be.eql(true);
                 expect(res).to.be.json;
-                res.body['success'].should.be.eql(true);
-                res.body['title'].should.be.eql('UserCreated');
                 done();
             });
     }));
 
-    it('should fail when creating a new user', (function(done) {
+    it('should update testboard and return success (BoardUpdated)', (function(done) {
         chai.request(app)
-            .post('/api/create')
+            .post(`/api/board/update/${testBoardId}?token=${token}`)
             .send({
-                username: 'janedoe',
-                name: 'Jane Doe',
-                email: 'janedoe@example.com',
-                password: 'password',
+                title: 'TestBoard New Title',
             })
             .end(function(err, res) {
                 res.should.have.status(200);
+                res.body.title.should.be.eql('BoardUpdated');
+                res.body.success.should.be.eql(true);
                 expect(res).to.be.json;
-                res.body['title'].should.be.eql('ValidationError');
-                res.body['success'].should.be.eql(false);
+                done();
+            });
+    }));
+    it('should get all boards related to user doe', (function(done) {
+        chai.request(app)
+            .get(`/api/board/user?token=${token}`)
+            .end(function(err, res) {
+                res.should.have.status(200);
+                expect(res.body).to.be.an('array');
+                expect(res.body).to.have.length(2);
+                expect(res).to.be.json;
                 done();
             });
     }));
 
-    it('should login', (function(done) {
-        chai.request(app)
-            .post('/api/login')
-            .send({
-                username: 'janedoe',
-                password: 'password',
-            })
-            .end(function(err, res) {
-                res.should.have.status(200);
-                expect(res).to.be.json;
-                res.body['title'].should.be.eql('LoginSuccessful');
-                res.body['success'].should.be.eql(true);
-
-                fs.writeFile("./tests/jwt.json", '{ "token": "' + res.body['token'] + '" }', function (err) {
-                    if (err) {
-                        return console.log(err);
-                    }
-                    console.log("The file was saved!");
-                });
-
-                done();
-            });
-    })); */
-
-  /*   beforeEach(function(done) {
-        mockgoose.helper.reset();
-        done();
-    });*/
-
-/*
-    after(function (done) {
-        mongoose.connect('mongodb://localhost:3010/testuser', function() {
-            /* Drop the DB */
-          /*  mongoose.connection.db.dropDatabase();
-            console.log("DB Dropped");
-            done();
-        });
-
-    }); */
 });

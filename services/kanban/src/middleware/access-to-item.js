@@ -36,7 +36,7 @@ module.exports = () => {
             return res.json({
                 success: false,
                 title: "ItemDoesNotExist",
-                message: `The Item with does not exist.`
+                message: `The Item with ID ${req.params.id} does not exist.`
             });
         }
 

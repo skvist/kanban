@@ -1,8 +1,5 @@
 var Mongoose = require('mongoose').Mongoose;
 var mongoose = new Mongoose();
-var fs = require('fs');
-
-//require('../before');
 
 var config = require('../../services/users/src/config');
 
@@ -142,14 +139,6 @@ describe('User routes/mongo', function () {
                 expect(res).to.be.json;
                 res.body['title'].should.be.eql('LoginSuccessful');
                 res.body['success'].should.be.eql(true);
-
-                fs.writeFile("./tests/jwt.json", '{ "token": "' + res.body['token'] + '" }', function (err) {
-                    if (err) {
-                        return console.log(err);
-                    }
-                    console.log("The file was saved!");
-                });
-
                 done();
             });
     }));

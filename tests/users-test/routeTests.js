@@ -5,7 +5,7 @@ var expect = chai.expect;
 var should = chai.should();
 
 //var request = require('request');
-var app = require('../../services/users/src/app');
+var app = require('../../services/kanban/src/app');
 
 chai.use(chaiHttp);
 

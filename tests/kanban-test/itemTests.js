@@ -1,25 +1,31 @@
-/* var Mongoose = require('mongoose').Mongoose;
+var Mongoose = require('mongoose').Mongoose;
 var mongoose = new Mongoose();
-var fs = require('fs');
 
 var chai = require('chai');
 var chaiHttp = require('chai-http');
+var jwt = require('jsonwebtoken');
+
 
 var expect = chai.expect;
 var should = chai.should();
 
-//var request = require('request');
-var app = require('../../services/users/src/app');
-var Item = require('../../services/users/src/models/user');
+var app = require('../../services/kanban/src/app');
+var Board = require('../../services/kanban/src/models/board');
+var Item = require('../../services/kanban/src/models/item');
 
-var config = require('../../services/users/src/config');
+
+var config = require('../../services/kanban/src/config');
+var token;
+var testBoardId;
+var testItemId;
 
 chai.use(chaiHttp);
 
 after(function (done) {
     function clearDB() {
         var promises = [
-            User.remove().exec(),
+            Board.remove().exec(),
+            Item.remove().exec(),
         ];
 
         Promise.all(promises)
@@ -41,156 +47,194 @@ after(function (done) {
     }
 });
 
-describe('User routes/mongo', function () {
-    it('should create the example user', (function(done) {
-        chai.request(app)
-            .get('/api/createuser')
+describe('Kanban Item routes/mongo tests', function () {
+    before(function(done) {
+        const payload = {
+            username: 'doe',
+            admin: false
+        };
+
+        token = jwt.sign(payload, config.jwtsecret, {
+            expiresIn: 60*60*24
+        });
+        console.log(token);
+
+        /*  chai.request(app)
+            .get('/api/example')
             .end(function(err, res) {
                 res.should.have.status(200);
-                res.body['success'].should.be.eql(true);
-                // expect(res.body).to.equal('Users Service API');
+            });
+        */
+        chai.request(app)
+            .get(`/api/board/all?token=${token}`)
+            .end(function(err, res) {
+                res.should.have.status(200);
+                testBoardId = res.body[0]._id;
+            });
+        done();
+    });
+
+    it('should try to get all boards without token (NoTokenProvided)', (function(done) {
+        chai.request(app)
+            .get(`/api/item/all`)
+            .end(function(err, res) {
+                res.should.have.status(403);
+                res.body.success.should.be.eql(false);
+                res.body.title.should.be.eql('NoTokenProvided');
+                expect(res).to.be.json;
                 done();
             });
     }));
 
-    it('should get All users (1 doe)', (function(done) {
+    it('should get All Items (4)', (function(done) {
         chai.request(app)
-            .get('/api/all')
+            .get(`/api/item/all?token=${token}`)
             .end(function(err, res) {
                 res.should.have.status(200);
-                res.body[0].username.should.be.eql('doe');
+                expect(res).to.be.json;
+                expect(res.body).to.be.an('array');
+                expect(res.body).to.have.length(4);
+                res.body[0].createdby.should.be.eql('doe');
+                testItemId =  res.body[0]._id;
+                done();
+            });
+    }));
+
+    it('should get one Item by ID', (function(done) {
+        chai.request(app)
+            .get(`/api/item/show/${testItemId}?token=${token}`)
+            .end(function(err, res) {
+                res.should.have.status(200);
+                res.body.title.should.be.eql('Lämna in ramverk2-projektet');
+                expect(res).to.be.json;
+                done();
+            });
+    }));
+
+    it('should fail to get item by ID (ItemDoesNotExist)', (function(done) {
+        chai.request(app)
+            .get(`/api/item/show/5a4f78f1399e250059d1bcf8?token=${token}`)
+            .end(function(err, res) {
+                res.should.have.status(200);
+                res.body.title.should.be.eql('ItemDoesNotExist');
+                res.body.success.should.be.eql(false);
+                expect(res).to.be.json;
+                done();
+            });
+    }));
+    it('should fail to get item by ID (CastError)', (function(done) {
+        chai.request(app)
+            .get(`/api/item/show/aaa?token=${token}`)
+            .end(function(err, res) {
+                res.should.have.status(200);
+                res.body.title.should.be.eql('CastError');
+                res.body.success.should.be.eql(false);
                 expect(res).to.be.json;
                 done();
             });
     }));
 
 
-    it('should get user doe', (function(done) {
+    it('should create a new Item and return ItemCreated', (function(done) {
         chai.request(app)
-            .get('/api/show/doe')
-            .end(function(err, res) {
-                res.should.have.status(200);
-                expect(res).to.be.json;
-                res.body.email.should.be.eql('johndoe@example.com');
-                done();
-            });
-    }));
-
-    it('should get no user', (function(done) {
-        chai.request(app)
-            .get('/api/show/nouser')
-            .end(function(err, res) {
-                res.should.have.status(200);
-                expect(res).to.be.json;
-                should.equal(res.body, null);
-                done();
-            });
-    }));
-
-    it('should create a new user', (function(done) {
-        chai.request(app)
-            .post('/api/create')
+            .post(`/api/item/create/${testBoardId}?token=${token}`)
             .send({
-                username: 'janedoe',
-                name: 'Jane Doe',
-                email: 'janedoe@example.com',
-                password: 'password',
+                title: 'NewTestItem',
+                description: 'New test desc',
+                createdby: 'doe',
+                type: "backlog",
             })
             .end(function(err, res) {
                 res.should.have.status(200);
+                res.body.title.should.be.eql('ItemCreated');
+                res.body.success.should.be.eql(true);
                 expect(res).to.be.json;
-                res.body['success'].should.be.eql(true);
-                res.body['title'].should.be.eql('UserCreated');
                 done();
             });
     }));
 
-    it('should fail when creating a new user', (function(done) {
+    it('should try to create a new Item and return WrongType', (function(done) {
         chai.request(app)
-            .post('/api/create')
+            .post(`/api/item/create/${testBoardId}?token=${token}`)
             .send({
-                username: 'janedoe',
-                name: 'Jane Doe',
-                email: 'janedoe@example.com',
-                password: 'password',
+                title: 'NewTestItem',
+                description: 'New test desc',
+                createdby: 'doe',
+                type: "wrongtype",
             })
             .end(function(err, res) {
                 res.should.have.status(200);
+                res.body.title.should.be.eql('WrongType');
+                res.body.success.should.be.eql(false);
                 expect(res).to.be.json;
-                res.body['title'].should.be.eql('ValidationError');
-                res.body['success'].should.be.eql(false);
                 done();
             });
     }));
 
-    it('should login', (function(done) {
-        chai.request(app)
-            .post('/api/login')
-            .send({
-                username: 'janedoe',
-                password: 'password',
-            })
-            .end(function(err, res) {
-                res.should.have.status(200);
-                expect(res).to.be.json;
-                res.body['title'].should.be.eql('LoginSuccessful');
-                res.body['success'].should.be.eql(true);
 
-                fs.writeFile("./tests/jwt.json", '{ "token": "' + res.body['token'] + '" }', function (err) {
-                    if (err) {
-                        return console.log(err);
-                    }
-                    console.log("The file was saved!");
-                });
-
-                done();
-            });
-    }));
-    it('should fail login with WrongPassword', (function(done) {
+    it('should update test Item and return success (ItemUpdated)', (function(done) {
         chai.request(app)
-            .post('/api/login')
+            .post(`/api/item/update/${testItemId}?token=${token}`)
             .send({
-                username: 'janedoe',
-                password: 'wrongpassword',
+                title: 'TestItem New Title',
             })
             .end(function(err, res) {
                 res.should.have.status(200);
+                res.body.title.should.be.eql('ItemUpdated');
+                res.body.success.should.be.eql(true);
                 expect(res).to.be.json;
-                res.body['title'].should.be.eql('WrongPassword');
-                res.body['success'].should.be.eql(false);
-                done();
-            });
-    }));
-    it('should fail login with NoPasswordProvided', (function(done) {
-        chai.request(app)
-            .post('/api/login')
-            .send({
-                username: 'janedoe',
-                password: '',
-            })
-            .end(function(err, res) {
-                res.should.have.status(200);
-                expect(res).to.be.json;
-                res.body['title'].should.be.eql('NoPasswordProvided');
-                res.body['success'].should.be.eql(false);
-                done();
-            });
-    }));
-    it('should fail login with NoUsernameProvided', (function(done) {
-        chai.request(app)
-            .post('/api/login')
-            .send({
-                username: '',
-                password: 'test',
-            })
-            .end(function(err, res) {
-                res.should.have.status(200);
-                expect(res).to.be.json;
-                res.body['title'].should.be.eql('NoUsernameProvided');
-                res.body['success'].should.be.eql(false);
                 done();
             });
     }));
 
+    it('should TRY to update test Item and fail (WrongType)', (function(done) {
+        chai.request(app)
+            .post(`/api/item/update/${testItemId}?token=${token}`)
+            .send({
+                type: 'wrongtype',
+            })
+            .end(function(err, res) {
+                res.should.have.status(200);
+                res.body.title.should.be.eql('WrongType');
+                res.body.success.should.be.eql(false);
+                expect(res).to.be.json;
+                done();
+            });
+    }));
+
+    it('should get all items related to test board', (function(done) {
+        chai.request(app)
+            .get(`/api/item/board/${testBoardId}?token=${token}`)
+            .end(function(err, res) {
+                res.should.have.status(200);
+                expect(res.body).to.be.an('array');
+                expect(res.body).to.have.length(5);
+                expect(res).to.be.json;
+                done();
+            });
+    }));
+
+    it('should delete test Item and return success (ItemDeleted)', (function(done) {
+        chai.request(app)
+            .delete(`/api/item/delete/${testItemId}?token=${token}`)
+            .end(function(err, res) {
+                res.should.have.status(200);
+                res.body.title.should.be.eql('ItemDeleted');
+                res.body.success.should.be.eql(true);
+                expect(res).to.be.json;
+                done();
+            });
+    }));
+
+    it('should delete board by ID (BoardDeleted)', (function(done) {
+        chai.request(app)
+            .delete(`/api/board/delete/${testBoardId}?token=${token}`)
+            .end(function(err, res) {
+                res.should.have.status(200);
+                res.body.title.should.be.eql('BoardDeleted');
+                res.body.success.should.be.eql(true);
+                expect(res).to.be.json;
+                done();
+            });
+    }));
 });
- */
