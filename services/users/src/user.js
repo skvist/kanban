@@ -8,13 +8,26 @@ var express = require('express'),
 
 var router = express.Router();
 
-mongoose.connect(config.database, {useMongoClient: true });
+/* mongoose.connect(config.database, {useMongoClient: true }, (err) => {
+    if (err) {
+        res.json({ success: false, title: err.name, message: err.message });
+    }
+}); */
+
 mongoose.Promise = global.Promise;
 User.schema.plugin(uniqueValidator);
 
+function dbconnect(res) {
+    mongoose.connect(config.database, {useMongoClient: true }, (err) => {
+        if (err) {
+            res.json({ success: false, title: err.name, message: err.message });
+        }
+    });
+}
 
 /* Create a test user. */
 router.get('/createuser', function(req, res) {
+    dbconnect(res);
     var newUser = new User({
         username: 'doe',
         name: 'John Doe',
@@ -36,6 +49,7 @@ router.get('/createuser', function(req, res) {
             res.json({ success: true, message: "User doe created!" });
         }
     });
+    // res.json({ success: false, message: "User doe not created!" });
 });
 
 /* GET users listing. */
@@ -45,6 +59,7 @@ router.get('/', function(req, res) {
 
 /* GET all users. TODO: Remove */
 router.get('/all', async (req, res) => {
+    dbconnect(res);
     const showUsers = await User.find({}).select({'password': false, 'admin': false});
 
     res.json(showUsers);
@@ -52,6 +67,7 @@ router.get('/all', async (req, res) => {
 
 /* GET one user. */
 router.get('/show/:username', async (req, res) => {
+    dbconnect(res);
     let username = req.params.username;
     const showUser = await User.findOne({ username }).select({'password': false, 'admin': false});
 
@@ -60,6 +76,7 @@ router.get('/show/:username', async (req, res) => {
 
 /* POST Insert user into db . */
 router.post('/create', async (req, res) => {
+    dbconnect(res);
     const data = req.body;
 
     var newUser = new User({
@@ -96,11 +113,13 @@ router.post('/update', async (req, res) => {
 
 /* DELETE Insert user into db . */
 router.delete('/delete/:id', async (req, res) => {
+    dbconnect(res);
     res.send('Placeholder for Delete a user.');
 });
 
 /* POST Login, return a JWT token */
 router.post('/login', async (req, res) => {
+    dbconnect(res);
     const username = req.body.username;
     const password = req.body.password;
 

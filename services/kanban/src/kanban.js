@@ -36,7 +36,7 @@ router.get('/example', function(req, res) {
     }).then( () => {
         exampleitem.forEach(doc => {
             doc["board"] = newBoard._id;
-            console.log(doc);
+            // console.log(doc);
             var newItem = new Item(
                 doc
             );
@@ -46,7 +46,7 @@ router.get('/example', function(req, res) {
                     console.log(err.message);
                     res.json({ success: false, title: err.name, message: err.message });
                 } else {
-                    console.log('Items created');
+                    console.log('Item created');
                 }
             });
         });

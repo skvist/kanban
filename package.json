@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run test-users; npm run test-kanban; npm run test-realtime; npm run test-web",
-    "test-users": "mocha tests/users-test/*.js",
-    "test-kanban": "mocha tests/kanban-test/*.js",
+    "pretest-users": "export DBWEBB_DSN=mongodb://localhost:3010/testkanban",
+    "test-users": "nyc --all --reporter=html --reporter=text mocha --exit --reporter=spec -x \"server.js\" tests/users-test/*.js",
+    "pretest-kanban": "export DBWEBB_DSN=mongodb://localhost:3010/testkanban",
+    "test-kanban": "mocha --exit tests/kanban-test/*.js",
     "test-realtime": "mocha tests/realtime-test/*.js",
     "test-web": "echo \"testweb - Nothing specified\" && exit 0",
     "posttest": "npm run lint",
@@ -24,6 +26,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
     "codecov": "^3.0.0",
     "coveralls": "^3.0.0",
     "eslint": "^4.10.0",
@@ -31,8 +34,16 @@
     "eslint-plugin-chai-friendly": "^0.4.0",
     "eslint-plugin-mocha": "^4.11.0",
     "eslint-plugin-react": "^7.5.1",
+    "jasmine": "^2.8.0",
     "jsonlint": "^1.6.2",
+    "jsonwebtoken": "^8.1.0",
     "mocha": "^4.0.1",
-    "nyc": "^11.2.1"
+    "mockgoose": "^7.3.3",
+    "mockgoose-fix": "^7.3.6",
+    "mongodb-download": "^2.2.3",
+    "mongoose": "^5.0.0-rc2",
+    "nyc": "^11.2.1",
+    "request": "^2.83.0",
+    "sinon": "^4.1.3"
   }
 }
