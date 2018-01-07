@@ -1,0 +1,21 @@
+checks:
+    javascript: true
+
+build:
+    environment:
+        node: 'v8.9.0'
+        mongodb: '3.2'
+        variables:
+          DBWEBB_DSN: mongodb://127.0.0.1:27017/testkanban
+
+    #dependencies:
+        #before:
+            #- npm install istanbul   # or add it as part of your package.json
+
+    tests:
+        override:
+            -
+                command: 'npm run scrutinizer'
+                coverage:
+                    file: 'coverage/clover.xml'
+                    format: 'clover'
