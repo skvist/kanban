@@ -1,34 +1,50 @@
 version: "3"
 services:
     user:
-        build:
-            context: .
-            dockerfile: .docker/node-8.9/Dockerfile
+        image: skvist/docknode
+        #build:
+        #    context: .
+        #    dockerfile: .docker/node-8.9/Dockerfile
         volumes:
             - ./services/users/:/home/node/app
         environment:
-            - DBWEBB_PORT_1=3001
-            - DBWEBB_DSN=mongodb://mongodb:27018/users
+            - DBWEBB_PORT_1=${DBWEBB_PORT_1}
+            - DBWEBB_DSN=${DBWEBB_DSN}
         ports:
-            - "3001:3001"
+            - "${DBWEBB_PORT_1}:${DBWEBB_PORT_1}"
         links:
             - mongodb
-        command: "npm run dev"
+        command: "npm start"
 
     kanban:
-        build:
-            context: .
-            dockerfile: .docker/node-8.9/Dockerfile
+        image: skvist/docknode
+        # build:
+        #    context: .
+        #    dockerfile: .docker/node-8.9/Dockerfile
         volumes:
             - ./services/kanban/:/home/node/app
         environment:
-            - DBWEBB_PORT_2=3002
-            - DBWEBB_DSN=mongodb://mongodb:27018/kanban
+            - DBWEBB_PORT_2=${DBWEBB_PORT_2}
+            - DBWEBB_DSN=${DBWEBB_DSN}
         ports:
-            - "3002:3002"
+            - "${DBWEBB_PORT_2}:${DBWEBB_PORT_2}"
         links:
             - mongodb
-        command: "npm run dev"
+        command: "npm start"
+
+    realtime:
+        image: skvist/docknode
+        # build:
+        #    context: .
+        #    dockerfile: .docker/node-8.9/Dockerfile
+        volumes:
+            - ./services/realtime/:/home/node/app
+        environment:
+            - DBWEBB_PORT_3=${DBWEBB_PORT_3}
+            - DBWEBB_DSN=${DBWEBB_DSN}
+        ports:
+            - "${DBWEBB_PORT_3}:${DBWEBB_PORT_3}"
+        command: "npm start"
 
     mongodb:
         image: mongo:3.4
@@ -37,8 +53,8 @@ services:
         volumes:
             - ./data/db:/data/db
         ports:
-            - 27018:27018
-        command: mongod --port 27018
+            - ${DBWEBB_MONGO_PORT}:${DBWEBB_MONGO_PORT}
+        command: mongod --port ${DBWEBB_MONGO_PORT}
 
     mongodb-test:
         image: mongo:3.4
@@ -49,21 +65,67 @@ services:
         ports:
             - 3010:3010
         command: mongod --port 3010
-
-
-    webdev:
-        image: node:8.9-alpine
-        ports:
-            - "8090:8080"
-        user: "node"
-        working_dir: /home/node/app
-        volumes:
-            - ./services/web/:/home/node/app
-        command: "npm run dev"
+    # webdev:
+    #     build:
+    #        context: .
+    #        dockerfile: .docker/vue/Dockerfile
+    #    ports:
+    #        - "3000:8080"
+    #    user: "node"
+    #    working_dir: /home/node/app
+    #    volumes:
+    #        - ./services/web/:/home/node/app
+    #    command: "node node_modules/.bin/webpack-dev-server --inline --progress --config build/webpack.dev.conf.js"
 
     webprod:
         image: nginx:stable-alpine
         volumes:
             - ./services/web/dist:/usr/share/nginx/html
         ports:
-            - "8080:80"
+            - "${DBWEBB_PORT_0}:80"
+
+
+    test1:
+        build:
+            context: .
+            dockerfile: .docker/node-8.9/Dockerfile
+        volumes:
+            - ./:/home/node/app
+        environment:
+            - DBWEBB_PORT_1=${DBWEBB_PORT_1}
+            - DBWEBB_DSN=mongodb://mongodb-test:3010/testkanban
+        ports:
+            - "${DBWEBB_PORT_1}:${DBWEBB_PORT_1}"
+        links:
+            - mongodb
+        command: "npm run test-all-docker"
+
+    test2:
+        build:
+            context: .
+            dockerfile: .docker/node-6/Dockerfile
+        volumes:
+            - ./:/home/node/app
+        environment:
+            - DBWEBB_PORT_1=${DBWEBB_PORT_1}
+            - DBWEBB_DSN=mongodb://mongodb-test:3010/testkanban
+        ports:
+            - "${DBWEBB_PORT_1}:${DBWEBB_PORT_1}"
+        links:
+            - mongodb
+        command: "npm run test-all-docker"
+
+    test3:
+        build:
+            context: .
+            dockerfile: .docker/node-9/Dockerfile
+        volumes:
+            - ./:/home/node/app
+        environment:
+            - DBWEBB_PORT_1=${DBWEBB_PORT_1}
+            - DBWEBB_DSN=mongodb://mongodb-test:3010/testkanban
+        ports:
+            - "${DBWEBB_PORT_1}:${DBWEBB_PORT_1}"
+        links:
+            - mongodb
+        command: "npm run test-all-docker"

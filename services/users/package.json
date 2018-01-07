@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "./node_modules/nodemon/bin/nodemon.js src/server.js",
-    "test": "nyc --all --reporter=html --reporter=text mocha --reporter=dot tests/**/*.js",
+    "test": "(cd ../../ && nyc --all --reporter=html --reporter=text mocha --exit --reporter=spec ./tests/users-test/*.js)",
     "eslint": "./node_modules/.bin/eslint .; exit 0",
     "posttest": "npm run eslint"
   },

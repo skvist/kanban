@@ -145,6 +145,12 @@ router.post('/login', async (req, res) => {
                     title: err.name,
                     message: err.message
                 });
+            } else if (!users) {
+                res.json({
+                    success: false,
+                    title: 'LoginFailed',
+                    message: 'Login failed, no user found'
+                });
             } else {
                 let correctPassword = bcrypt.compareSync(password, users.password);
 
