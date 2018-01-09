@@ -21,30 +21,35 @@ Det hjälper till visualisera arbetsflödet, så att man får en överblick av p
 
 ## Innehållsförteckning
 
-- [Bakgrund](#bakgrund)
-- [Applikationen](#applikationen)
-- [Arkitektur](#arkitektur)
-- [Kravbild](#kravbild)
-- [Installation och start](#installation-och-start)
-    - [Hämta från GitHub](#hämta-från-github)
-    - [Installera](#installera-paket-för-alla-tjänster)
-    - [Starta](#starta-alla-tjänster)
-    - [Utveckling](#utveckling)
-- [Konfigurera](#konfiguration)
-- [Test](#test)
-    - [Starta test](#starta-test)
-    - [Omfattning](#omfattning)
-    - [Testverktyg](#testverktyg)
+Gå till dokumentation för [User RESTful API](services/users/README.md)
 
-- [Continuous integration](#continuous-integration)
-- [Tekniker](#tekniker)
-    - [Kanban](#kanban-tjänst)
-    - [Users](#users-tjänst)
-    - [Realtid](#realtime-tjänst)
-    - [Web](#webb-tjänst)
-- [Databas](#databas)
-- [NPM-modul](#npm-modul)
-- [Docker](#docker)
+Gå till dokumentation för [Kanban RESTful API](services/kanban/README.md)
+
+
+
+* [**Bakgrund**](#bakgrund)
+* [**Applikationen**](#applikationen)
+* [**Arkitektur**](#arkitektur)
+* [**Kravbild**](#kravbild)
+* [**Installation och start**](#installation-och-start)
+    * [Hämta från GitHub](#hämta-från-github)
+    * [Installera](#installera-paket-för-alla-tjänster)
+    * [Starta](#starta-alla-tjänster)
+    * [Utveckling](#utveckling)
+* [**Konfigurera**](#konfiguration)
+* [**Test**](#test)
+    * [Starta test](#starta-test)
+    * [Omfattning](#omfattning)
+    * [Testverktyg](#testverktyg)
+* [**Continuous integration**](#continuous-integration)
+* [**Tekniker**](#tekniker)
+    * [Kanban](#kanban-tjänst)
+    * [Users](#users-tjänst)
+    * [Realtid](#realtime-tjänst)
+    * [Web](#webb-tjänst)
+* [**Databas**](#databas)
+* [**NPM-modul**](#npm-modul)
+* [**Docker**](#docker)
 
 
 
@@ -64,16 +69,16 @@ Katalogstruktur
 ```
 kanban
 ├── data
-│   ├── db
+│   └── db
 ├── services
 │   ├── kanban
 │   │   └── src
-│   │	└── models
+│   │	     └── models
 │   ├── realtime
 │   │   └── src
 │   ├── users
 │   │   └── src
-│   │	└── models
+│   │	     └── models
 │   └── web
 │        └── src
 └── tests
@@ -112,7 +117,7 @@ För att starta projektet från grundkatalogen så krävs Docker och Docker-comp
 ### Hämta från GitHub
 
 ```
-git clone git@github.com:skvist/kanban.git
+git clone https://github.com/skvist/kanban.git
 ```
 
 Varje tjänst går att installera och starta separat från respektive katalog för vidareutveckling med motsvarande kommandon.

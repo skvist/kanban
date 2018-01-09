@@ -3,13 +3,13 @@
  */
 const settings = {
     userUrl: 'http://localhost',
-    userPort: 3001,
+    userPort: 5001,
 
     kanbanUrl: 'http://localhost',
-    kanbanPort: 3002,
+    kanbanPort: 5002,
 
     chatUrl: 'ws://localhost',
-    chatPort: 3003,
+    chatPort: 5003,
 };
 
 module.exports = settings;

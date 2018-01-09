@@ -1,9 +1,12 @@
 <template>
     <div class="start">
+        <h1>Välkommen till Kanban</h1>
+        <p>Kanban härstammar från bilindustrin i Japan men har anammats inom många områden, däribland web/mjukvaruutveckling, där det ibland används inom exempelvis agil utveckling. Det hjälper till visualisera arbetsflödet, så att man får en överblick av projektet och kan följa vare feature från start till slut.</p>
+        <img src="../assets/postit.jpg" class="start-img">
+
        <div class="columns">
             <div class="column"></div>
             <div class="column">
-                <h1>Välkommen till Kanban</h1>
                 <div class="field is-grouped">
                     <p class="control">
                          <button class="button is-primary is-medium" @click="isLoginActive = true">
@@ -67,6 +70,14 @@ h2 {
 .middle {
     margin-top: 0.5em;
     font-size: 20px;
+}
+
+.start-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2em;
+    border: 1px solid black;
 }
 
 </style>
