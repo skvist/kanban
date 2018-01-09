@@ -18,10 +18,5 @@ npm run build
 npm run build --report
 
 # run unit tests
-npm run unit
-
-# run all tests
-npm test
+Tests can be run from the main folder ./kanban
 ```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

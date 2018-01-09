@@ -97,7 +97,7 @@ services:
         ports:
             - "${DBWEBB_PORT_1}:${DBWEBB_PORT_1}"
         links:
-            - mongodb
+            - mongodb-test
         command: "npm run test-all-docker"
 
     test2:
@@ -112,7 +112,7 @@ services:
         ports:
             - "${DBWEBB_PORT_1}:${DBWEBB_PORT_1}"
         links:
-            - mongodb
+            - mongodb-test
         command: "npm run test-all-docker"
 
     test3:
@@ -127,5 +127,5 @@ services:
         ports:
             - "${DBWEBB_PORT_1}:${DBWEBB_PORT_1}"
         links:
-            - mongodb
+            - mongodb-test
         command: "npm run test-all-docker"

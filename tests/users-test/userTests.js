@@ -33,14 +33,14 @@ after(function (done) {
             });
     }
 
-    if (mongoose.connection.readyState === 0 && config.database.search('testkanban') > -1) {
+    if (mongoose.connection.readyState === 0) {
         mongoose.connect(config.database, function (err) {
             if (err) {
                 throw err;
             }
             return clearDB();
         });
-    } else if (config.database.search('testkanban') > -1) {
+    } else {
         return clearDB();
     }
 });
