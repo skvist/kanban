@@ -26,8 +26,12 @@
 </template>
 
 <script>
+    import io from 'socket.io-client';
+
     const axios = require('axios');
     const config = require('@/config');
+
+    const socket = io.connect(`${config.chatUrl}:${config.chatPort}`);
 
     /* eslint no-underscore-dangle: 0 */
     export default {
@@ -61,6 +65,11 @@
                             duration: 500,
                             position: 'is-top',
                         });
+                        setTimeout(() => {
+                            console.log('sent emit', this.item.board);
+                            socket.emit('updated', { board: this.item.board, username: localStorage.username });
+                        }, 100);
+
                         this.$parent.close();
                     } else {
                         this.$toast.open({

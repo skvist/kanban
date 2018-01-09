@@ -25,8 +25,12 @@
 </template>
 
 <script>
+    import io from 'socket.io-client';
+
     const axios = require('axios');
     const config = require('@/config');
+
+    const socket = io.connect(`${config.chatUrl}:${config.chatPort}`);
 
     /* eslint no-underscore-dangle: 0 */
     export default {
@@ -52,6 +56,8 @@
                 // eslint-disable-next-line
                 console.log(this.title);
 
+                console.log('THIS BOARD', this.board);
+
                 axios.post(`${config.kanbanUrl}:${config.kanbanPort}/api/item/create/${this.board}?token=${localStorage.token}`, {
                     title: this.title,
                     description: this.description,
@@ -69,6 +75,11 @@
                             duration: 500,
                             position: 'is-top',
                         });
+                        setTimeout(() => {
+                            console.log('sent emit', this.board);
+                            socket.emit('updated', { board: this.board, username: localStorage.username });
+                        }, 100);
+
                         this.$emit('itemadded');
 
                         this.$parent.close();
